@@ -1,4 +1,5 @@
 #pragma once
+#include<iostream>
 class BTree
 {
 private:
@@ -9,44 +10,32 @@ private:
 		long long* key;
 		Node** child;
 		bool leaf;
-		Node(int deg) {
+		Node(int deg, bool state) {
 			t = deg;
 			size = 0;
 			key = new long long[2 * t - 1];
 			child = new Node * [2 * t];
-			leaf = true;
+			leaf = state;
 		}
 		~Node() {
-			delete key;
-			for (int i = 0; i < 2 * t; i++)
-			{
-				delete child[i];
-			}
-			delete child;
+
 		}
+
+		void insertToLeaf(long long data);
+		void splitChild(int pos, Node* split);
+		void traverse();
 	};
 
 	int t;
 	Node* root;
-	void tryverse(long long data, Node* curr);
-	Node* find(Node* curr, long long data);
 public:
 	BTree(int deg);
 	~BTree();
-	bool search(long long data);
+	void insert(long long data);
+	//bool search(long long data);
+	void traverse()
+	{
+		if (root != nullptr) root->traverse();
+	}
 };
 
-BTree::BTree(int deg) {
-	t = deg;
-	root = new Node(t);
-}
-
-BTree::~BTree() {
-	delete root;
-}
-
-bool BTree::search(long long data) {
-	if (find(this->root, data) != nullptr) return true;
-	else
-		return false;
-}
