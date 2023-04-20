@@ -1,24 +1,5 @@
 #include "BTree.h"
 
-void BTree::Node::traverse()
-{
-	// There are n keys and n+1 children, traverse through n keys
-	// and first n children
-	int i;
-	for (i = 0; i < size; i++)
-	{
-		// If this is not leaf, then before printing key[i],
-		// traverse the subtree rooted with child C[i].
-		if (leaf == false)
-			child[i]->traverse();
-		std::cout << " " << key[i];
-	}
-
-	// Print the subtree rooted with last child
-	if (leaf == false)
-		child[i]->traverse();
-}
-
 void BTree::Node::insertToLeaf(long long data) {
 	if (leaf)
 	{
@@ -82,6 +63,16 @@ void BTree::Node::splitChild(int pos, Node* split)
 	size++;
 }
 
+BTree::Node* BTree::Node::find(long long data) {
+	int i = 0;
+	while (i < size && data > key[i])
+		i++;
+
+	if (key[i] == data) return this;
+	if (leaf) return nullptr;
+	return child[i]->find(data);
+}
+
 BTree::BTree(int deg) {
 	t = deg;
 	root = nullptr;
@@ -118,4 +109,11 @@ void BTree::insert(long long data) {
 			root->insertToLeaf(data);
 		}
 	}
+}
+
+bool BTree::search(long long data)
+{
+	if (root->find(data) != nullptr) return true;
+	else
+		return false;
 }

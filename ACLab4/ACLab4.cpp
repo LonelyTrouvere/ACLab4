@@ -12,7 +12,20 @@ int main()
     t.insert(30);
     t.insert(7);
     t.insert(17);
+    t.insert(100);
 
-    std::cout << "Traversal of the constructed tree is ";
-    t.traverse();
+
+    int k = 6;
+    (t.search(k) != NULL) ? std::cout << "\nPresent" : std::cout << "\nNot Present";
+
+    k = 15;
+    (t.search(k) != NULL) ? std::cout << "\nPresent" : std::cout << "\nNot Present";
+
+    k = 17;
+    (t.search(k) != NULL) ? std::cout << "\nPresent" : std::cout << "\nNot Present";
+
+    k = 100;
+    (t.search(k) != NULL) ? std::cout << "\nPresent" : std::cout << "\nNot Present";
+
+    return 0;
 }

@@ -18,12 +18,13 @@ private:
 			leaf = state;
 		}
 		~Node() {
-
+			delete child;
+			delete key;
 		}
 
 		void insertToLeaf(long long data);
 		void splitChild(int pos, Node* split);
-		void traverse();
+		Node* find(long long data);
 	};
 
 	int t;
@@ -32,10 +33,6 @@ public:
 	BTree(int deg);
 	~BTree();
 	void insert(long long data);
-	//bool search(long long data);
-	void traverse()
-	{
-		if (root != nullptr) root->traverse();
-	}
+	bool search(long long data);
 };
 
