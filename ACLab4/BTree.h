@@ -25,6 +25,18 @@ private:
 		void insertToLeaf(long long data);
 		void splitChild(int pos, Node* split);
 		Node* find(long long data);
+		int greater(long long data);
+		void fill(int x);
+		void getFromPrev(int x);
+		void getFromNext(int x);
+		void merge(int x);
+		void remove(long long data);
+		void removeLeaf(int x);
+		void removeInternal(int x);
+		int predecessor(int x);
+		int successor(int x);
+
+		void traverse();
 	};
 
 	int t;
@@ -33,6 +45,12 @@ public:
 	BTree(int deg);
 	~BTree();
 	void insert(long long data);
+	void remove(long long data);
 	bool search(long long data);
+
+	void traverse()
+	{
+		if (root != NULL) root->traverse();
+	}
 };
 

@@ -73,6 +73,201 @@ BTree::Node* BTree::Node::find(long long data) {
 	return child[i]->find(data);
 }
 
+int BTree::Node::greater(long long data) {
+	int x = 0;
+	while (x < size && key[x] < data)
+		x++;
+
+	return x;
+}
+
+void BTree::Node::getFromPrev(int x) {
+	Node* orig = child[x];
+	Node* sibling = child[x - 1];
+
+	for (int i = orig->size - 1; i >= 0; i--)
+	{
+		orig->key[i + 1] = orig->key[i];
+	}
+
+	if (!orig->leaf)
+	{
+		for (int i = orig->size; i >= 0; i--)
+		{
+			orig->child[i + 1] = orig->child[i];
+		}
+	}
+
+	orig->key[0] = key[x - 1];
+
+	if (!orig->leaf)
+	{
+		orig->child[0] = sibling->child[sibling->size];
+	}
+
+	key[x - 1] = sibling->key[sibling->size - 1];
+	orig->size++;
+	sibling->size--;
+}
+
+void BTree::Node::getFromNext(int x) {
+	Node* orig = child[x];
+	Node* sibling = child[x + 1];
+
+	orig->key[orig->size] = key[x];
+
+	if (!orig->leaf)
+	{
+		orig->child[orig->size + 1] = sibling->child[0];
+	}
+
+	key[x] = sibling->key[0];
+
+	for (int i = 1; i < sibling->size; i++)
+	{
+		sibling->key[i - 1] = sibling->key[i];
+	}
+
+	if (!sibling->leaf)
+	{
+		for (int i = 1; i < sibling->size; i++)
+			sibling->child[i - 1] = sibling->child[i];
+	}
+
+	orig->size++;
+	sibling->size--;
+}
+
+void BTree::Node::merge(int x) {
+	Node* orig = child[x];
+	Node* sibling = child[x + 1];
+
+	orig->key[t - 1] = key[x];
+
+	for (int i = 0; i < sibling->size; i++)
+	{
+		orig->key[i + t] = sibling->key[i];
+	}
+
+	if (!orig->leaf)
+	{
+		for (int i = 0; i < sibling->size; i++)
+		{
+			orig->child[i + t] = sibling->child[i];
+		}
+	}
+
+	for (int i = x + 1; i < size; i++)
+	{
+		key[i - 1] = key[i];
+	}
+
+	for (int i = x + 2; i <= size; i++)
+		child[i - 1] = child[i];
+
+	orig->size += sibling->size + 1;
+	size--;
+
+	delete sibling;
+}
+
+void BTree::Node::fill(int x) {
+	if (x != 0 && child[x - 1]->size >= t)
+		getFromPrev(x);
+	else
+		if (x != size && child[x + 1]->size >= t)
+			getFromNext(x);
+		else
+		{
+			if (x != size)
+				merge(x);
+			else
+				merge(x - 1);
+		}
+}
+
+void BTree::Node::remove(long long data) {
+	int x = greater(data);
+
+	if (x<size && key[x] == data) {
+		if (leaf) removeLeaf(data);
+		else
+			removeInternal(data);
+	}
+	else
+	{
+		if (leaf)
+		{
+			return;
+		}
+		else
+		{
+			bool flag;
+			if (x == size) flag = true;
+			else
+				flag = false;
+
+			if (child[x]->size < t)
+				fill(x);
+
+			if (flag && x > size)
+				child[x - 1]->remove(data);
+			else
+				child[x]->remove(data);
+		}
+	}
+}
+
+void BTree::Node::removeLeaf(int x) {
+	for (int i = x + 1; i < size; i++)
+	{
+		key[i - 1] = key[i];
+	}
+
+	size--;
+}
+
+void BTree::Node::removeInternal(int x) {
+	int k = key[x];
+
+	if (child[x]->size >= t)
+	{
+		int pred = predecessor(x);
+		key[x] = pred;
+		child[x]->remove(pred);
+	}
+	else
+	{
+		if (child[x + 1]->size >= t)
+		{
+			int succ = successor(x);
+			key[x] = succ;
+			child[x + 1]->remove(succ);
+		}
+		else
+		{
+			merge(x);
+			child[x]->remove(k);
+		}
+	}
+}
+
+int BTree::Node::predecessor(int x) {
+	Node* curr = child[x];
+	while (!curr->leaf)
+		curr = curr->child[curr->size];
+
+	return curr->key[curr->size - 1];
+}
+
+int BTree::Node::successor(int x) {
+	Node* curr = child[x + 1];
+	while (!curr->leaf)
+		curr = curr->child[0];
+
+	return curr->key[0];
+}
+
 BTree::BTree(int deg) {
 	t = deg;
 	root = nullptr;
@@ -111,9 +306,47 @@ void BTree::insert(long long data) {
 	}
 }
 
+void BTree::remove(long long data) {
+	if (!root)
+		return;
+
+	root->remove(data);
+
+	if (root->size == 0)
+	{
+		Node* temp = root;
+
+		if (root->leaf)
+			root = nullptr;
+		else
+			root = root->child[0];
+
+		delete temp;
+	}
+}
+
 bool BTree::search(long long data)
 {
 	if (root->find(data) != nullptr) return true;
 	else
 		return false;
+}
+
+void BTree::Node::traverse()
+{
+	// There are n keys and n+1 children, traverse through n keys
+	// and first n children
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		// If this is not leaf, then before printing key[i],
+		// traverse the subtree rooted with child C[i].
+		if (leaf == false)
+			child[i]->traverse();
+		std::cout << " " << key[i];
+	}
+
+	// Print the subtree rooted with last child
+	if (leaf == false)
+		child[i]->traverse();
 }
