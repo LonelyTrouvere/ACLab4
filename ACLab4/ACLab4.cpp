@@ -5,8 +5,7 @@ using namespace std;
 
 int main()
 {
-
-    BTree t(3); // A B-Tree with minimum degree 3
+    BTree t(3); 
 
     t.insert(1);
     t.insert(3);
@@ -32,39 +31,12 @@ int main()
     t.insert(12);
     t.insert(6);
 
-    cout << "Traversal of tree constructed is\n";
-    t.traverse();
-    cout << endl;
-
     t.remove(6);
-    cout << "Traversal of tree after removing 6\n";
-    t.traverse();
-    cout << endl;
-
     t.remove(13);
-    cout << "Traversal of tree after removing 13\n";
-    t.traverse();
-    cout << endl;
-
     t.remove(7);
-    cout << "Traversal of tree after removing 7\n";
-    t.traverse();
-    cout << endl;
-
     t.remove(4);
-    cout << "Traversal of tree after removing 4\n";
-    t.traverse();
-    cout << endl;
-
     t.remove(2);
-    cout << "Traversal of tree after removing 2\n";
-    t.traverse();
-    cout << endl;
-
     t.remove(16);
-    cout << "Traversal of tree after removing 16\n";
-    t.traverse();
-    cout << endl;
 
-    return 0;
+    t.traverse();
 }

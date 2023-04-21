@@ -35,8 +35,7 @@ private:
 		void removeInternal(int x);
 		int predecessor(int x);
 		int successor(int x);
-
-		void traverse();
+		void traverse(int lvl);
 	};
 
 	int t;
@@ -47,10 +46,10 @@ public:
 	void insert(long long data);
 	void remove(long long data);
 	bool search(long long data);
-
 	void traverse()
 	{
-		if (root != NULL) root->traverse();
+		if (root != NULL) root->traverse(0);
 	}
+
 };
 

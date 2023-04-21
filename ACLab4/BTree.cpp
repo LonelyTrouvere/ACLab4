@@ -130,7 +130,7 @@ void BTree::Node::getFromNext(int x) {
 
 	if (!sibling->leaf)
 	{
-		for (int i = 1; i < sibling->size; i++)
+		for (int i = 1; i <= sibling->size; i++)
 			sibling->child[i - 1] = sibling->child[i];
 	}
 
@@ -190,9 +190,9 @@ void BTree::Node::remove(long long data) {
 	int x = greater(data);
 
 	if (x<size && key[x] == data) {
-		if (leaf) removeLeaf(data);
+		if (leaf) removeLeaf(x);
 		else
-			removeInternal(data);
+			removeInternal(x);
 	}
 	else
 	{
@@ -331,22 +331,30 @@ bool BTree::search(long long data)
 	else
 		return false;
 }
-
-void BTree::Node::traverse()
+void BTree::Node::traverse(int lvl)
 {
-	// There are n keys and n+1 children, traverse through n keys
-	// and first n children
-	int i;
-	for (i = 0; i < size; i++)
+	std::cout << '\n';
+	std::cout << "Depth: " << lvl<<'\n';
+	std::cout << "Keys in this node: ";
+	
+	for (int i = 0; i < size; i++)
 	{
-		// If this is not leaf, then before printing key[i],
-		// traverse the subtree rooted with child C[i].
-		if (leaf == false)
-			child[i]->traverse();
-		std::cout << " " << key[i];
+		std::cout << key[i] << ' ';
+	}
+	std::cout << '\n';
+	if (leaf)
+	{
+		std::cout << "Leaf. Returning\n";
+		std::cout << '\n';
+		return;
+	}
+	else
+	for (int i = 0; i <= size; i++)
+	{
+		std::cout << "Entering child: " << i<<'\n';
+		child[i]->traverse(lvl + 1);
 	}
 
-	// Print the subtree rooted with last child
-	if (leaf == false)
-		child[i]->traverse();
+	std::cout << "No more children. Returning\n";
+
 }
