@@ -129,9 +129,11 @@
   <ItemGroup>
     <ClCompile Include="ACLab4.cpp" />
     <ClCompile Include="BTree.cpp" />
+    <ClCompile Include="SegmentTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BTree.h" />
+    <ClInclude Include="SegmentTree.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
